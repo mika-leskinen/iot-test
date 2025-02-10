@@ -1,3 +1,4 @@
 .env
 /openvpn-clients
 *.ovpn
+node_modules
