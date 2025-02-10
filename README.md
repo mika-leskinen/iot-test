@@ -45,6 +45,9 @@ cd ~/devel/openvpn-server
 # generate initial openvpn config files:
 docker run -v ./ovpn-data:/etc/openvpn --rm kylemanna/openvpn ovpn_genconfig -u udp://SERVER_IP_HERE:51194
 
+# NOTE: add new line with "topology subnet" to the end of the ./ovpn-data/openvpn.conf file:
+echo "topology subnet" | sudo tee -a ./ovpn-data/openvpn.conf
+
 # init cert stuff (note down the passphrase for later):
 # asks for "New CA Key Passphrase:" twice, then the same passphrase twice more
 docker run -v ./ovpn-data:/etc/openvpn --rm -it kylemanna/openvpn ovpn_initpki
@@ -70,14 +73,11 @@ ls -al ./clients
 
 # setting up static IPs for clients (here the default ip range is 192.168.255.0/24):
 
-# switch to root user:
-sudo su
-
 # dev machine IP will be 192.168.255.10
-echo "ifconfig-push 192.168.255.10 255.255.255.0" > ./ovpn-data/ccd/dev
+echo "ifconfig-push 192.168.255.10 255.255.255.0" | sudo tee ./ovpn-data/ccd/dev
 
 # raspberry pi IP will be 192.168.255.11
-echo "ifconfig-push 192.168.255.11 255.255.255.0" > ./ovpn-data/ccd/raspberry
+echo "ifconfig-push 192.168.255.11 255.255.255.0" | sudo tee ./ovpn-data/ccd/raspberry
 
 # running the openvpn server container in the background:
 
