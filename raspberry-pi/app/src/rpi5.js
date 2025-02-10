@@ -15,12 +15,12 @@ class Rpi5 {
     );
 
     if (stderr) {
-      console.error("err - readCpuTemp: " + stderr);
+      console.error("rpi5 - err: " + stderr);
       return null;
     }
 
-    // return output as float
-    return parseFloat(stdout);
+    // return output as {key: value}
+    return { cpuTemp: parseFloat(stdout) };
   }
 }
 
