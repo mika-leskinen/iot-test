@@ -30,8 +30,34 @@ const main = async () => {
   };
 
   // output to console
-  // TODO: send to cloud backend instead
   console.log(data);
+
+  // TODO: save to file
+
+  // send to cloud backend
+  try {
+    const responseJson = await fetch(
+      "http://" +
+        (process.env.SERVER_IP || "192.168.255.10") +
+        ":" +
+        (process.env.SERVER_PORT || 9999) +
+        "/data",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const response = await responseJson.json();
+    if (response?.msg !== "OK") {
+      return console.error("main - err: http response " + response.msg);
+    }
+    console.log("main - http post OK");
+  } catch (err) {
+    return console.error("main - err: " + err.message);
+  }
 };
 
 // run once
