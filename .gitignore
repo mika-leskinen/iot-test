@@ -3,3 +3,4 @@
 *.ovpn
 node_modules
 *.sqlite3
+*.dat
