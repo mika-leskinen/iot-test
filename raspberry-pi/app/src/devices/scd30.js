@@ -29,31 +29,40 @@ const execPath =
 
 class SCD30 {
   static async getValues() {
-    const { stdout, stderr } = await exec(execPath);
+    try {
+      const { stdout, stderr } = await exec(execPath);
 
-    if (stderr) {
-      console.error("scd30 - err: " + stderr);
+      if (stderr) {
+        console.error("scd30 - err: " + stderr);
+        return null;
+      }
+
+      let values = {
+        co2_concentration: null,
+        temperature: null,
+        humidity: null,
+      };
+
+      // split output to get ["key:", "value", "key:", "value", "key:", "value"]
+      const parts = stdout.split(" ");
+
+      // check if there are exactly 3 key-value pairs:
+      if (parts.length < 6) {
+        console.error("scd30 - err: invalid data");
+        return null;
+      }
+
+      // put the values to the values object (order should always be the same):
+      values.co2_concentration = parseFloat(parts[1]);
+      values.temperature = parseFloat(parts[3]);
+      values.humidity = parseFloat(parts[5]);
+
+      // values object should now be like {co2_concentration: 0.0, temperature: 0.0, humidity: 0.0}
+      return values;
+    } catch (err) {
+      console.error("scd30 - err: " + err.message);
       return null;
     }
-
-    let values = { co2_concentration: null, temperature: null, humidity: null };
-
-    // split output to get ["key:", "value", "key:", "value", "key:", "value"]
-    const parts = stdout.split(" ");
-
-    // check if there are exactly 3 key-value pairs:
-    if (parts.length < 6) {
-      console.error("scd30 - err: invalid data");
-      return null;
-    }
-
-    // put the values to the values object (order should always be the same):
-    values.co2_concentration = parseFloat(parts[1]);
-    values.temperature = parseFloat(parts[3]);
-    values.humidity = parseFloat(parts[5]);
-
-    // values object should now be like {co2_concentration: 0.0, temperature: 0.0, humidity: 0.0}
-    return values;
   }
 }
 

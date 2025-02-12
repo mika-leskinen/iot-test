@@ -2,3 +2,4 @@
 /openvpn-clients
 *.ovpn
 node_modules
+*.sqlite3
