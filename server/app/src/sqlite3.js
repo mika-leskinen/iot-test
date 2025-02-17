@@ -18,7 +18,7 @@ class SQLite {
           console.error("sqlite3 - err: " + err.message);
           return reject(err);
         }
-
+        console.log("sqlite3 - query: OK (" + sql + ")");
         return resolve(result);
       });
     });
@@ -27,13 +27,18 @@ class SQLite {
   // create db schema
   init() {
     // TODO: create table statements
+    this.query("CREATE TABLE IF NOT EXISTS measurements(ts BIGINT, json TEXT)");
+    console.log("sqlite3 - init");
+  }
+
+  reset() {
+    this.query("DROP TABLE IF EXISTS measurements");
+    this.init();
+    console.log("sqlite3 - reset");
   }
 }
 
 module.exports = SQLite;
-
-const db = new SQLite();
-db.init();
 
 /*
 // usage:

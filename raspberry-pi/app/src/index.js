@@ -52,7 +52,7 @@ const main = async () => {
   // send to cloud backend
   HttpPost.sendJson(
     "http://" +
-      (process.env.SERVER_IP || "192.168.255.10") +
+      (process.env.SERVER_IP || "127.0.0.1") +
       ":" +
       (process.env.SERVER_PORT || 9999) +
       "/data",
