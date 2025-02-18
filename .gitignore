@@ -4,3 +4,5 @@
 node_modules
 *.sqlite3
 *.dat
+/server/influxdb/data
+/server/influxdb/config

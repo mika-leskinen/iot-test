@@ -1,13 +1,21 @@
 const express = require("express");
-const SQLite = require("./sqlite3");
+const SQLite = require("./data-store/sqlite3");
+const InfluxDB = require("./data-store/influxdb");
 
 // see https://expressjs.com/en/starter/installing.html
 const app = express();
 app.use(express.json());
 
 // sqlite3 database
-const db = new SQLite();
-db.init();
+const sqlite3 = new SQLite("./test.sqlite3");
+sqlite3.init();
+
+// influxdb database
+const influxdb = new InfluxDB(
+  process.env.INFLUX_HOST || "localhost",
+  process.env.INFLUX_PORT || 8086,
+  process.env.INFLUX_DB_NAME || "iot-test-influxdb"
+);
 
 // default GET response
 app.get("/", (req, res) => {
@@ -19,18 +27,11 @@ app.post("/data", (req, res) => {
   // get data object from request as {ts: TS, values: {key: VAL}}
   let data = req.body;
   try {
-    // extract ms timestamp from data:
-    const ts = data.ts;
+    // insert to sqlite3 database
+    sqlite3.saveTimeseries("iot-test-raspberrypi", data);
 
-    // remove ms timestamp from data:
-    delete data.ts;
-
-    // insert to database (ts = TS, json = '{"key": VAL}'):
-    // NOTE: see https://stackoverflow.com/questions/15367696/storing-json-in-database-vs-having-a-new-column-for-each-key
-    db.query("INSERT INTO measurements(ts, json) VALUES(?, ?)", [
-      ts,
-      JSON.stringify(data.values),
-    ]);
+    // insert to influxdb database
+    influxdb.saveTimeseries("iot-test-raspberrypi", data);
 
     console.log("main - db data write: OK");
 

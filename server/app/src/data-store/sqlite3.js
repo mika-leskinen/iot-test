@@ -1,5 +1,8 @@
 const sqlite3 = require("sqlite3");
 
+// see https://www.sqlite.org/
+// also see https://github.com/TryGhost/node-sqlite3/wiki/API
+
 class SQLite {
   constructor(filename = "./test.sqlite3") {
     this.conn = new sqlite3.Database(filename, (err) => {
@@ -31,10 +34,33 @@ class SQLite {
     console.log("sqlite3 - init");
   }
 
+  // reset db
   reset() {
     this.query("DROP TABLE IF EXISTS measurements");
     this.init();
     console.log("sqlite3 - reset");
+  }
+
+  // save measurements
+  // dataObj format should be {ts: TS, values: {KEY: VAL}}
+  // NOTE: see https://stackoverflow.com/questions/15367696/storing-json-in-database-vs-having-a-new-column-for-each-key
+  // NOTE: measurementName for consistency
+  async saveTimeseries(measurementName = "unknown", dataObj) {
+    // extract ms timestamp from data:
+    const ts = dataObj.ts;
+
+    // remove ms timestamp from data:
+    delete dataObj.ts;
+
+    await this.query("INSERT INTO measurements(ts, json) VALUES(?, ?)", [
+      ts,
+      JSON.stringify(dataObj.values),
+    ]);
+  }
+
+  // get measurements
+  async getTimeseries() {
+    // TODO: getTimeseries
   }
 }
 
