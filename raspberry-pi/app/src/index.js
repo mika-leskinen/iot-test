@@ -1,6 +1,9 @@
 // see https://www.npmjs.com/package/dotenv
 require("dotenv").config();
 
+// "logging middleware"
+require("./logging/console");
+
 // see https://nodejs.org/api/fs.html#file-system
 const fs = require("fs/promises");
 

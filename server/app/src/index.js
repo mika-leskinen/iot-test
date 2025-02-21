@@ -1,6 +1,11 @@
+require("dotenv").config();
+
+// "logging middleware"
+require("./logging/console");
+
 const express = require("express");
-const SQLite = require("./data-store/sqlite3");
-const InfluxDB = require("./data-store/influxdb");
+const SQLite = require("./datastore/sqlite3");
+const InfluxDB = require("./datastore/influxdb");
 
 // see https://expressjs.com/en/starter/installing.html
 const app = express();

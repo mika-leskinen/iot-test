@@ -37,6 +37,7 @@ class InfluxDB {
           fields: dataObj.values,
         },
       ]);
+      console.log("influxdb - writePoints OK");
     } catch (err) {
       console.error("influxdb - err: " + err.message);
     }
