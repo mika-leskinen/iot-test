@@ -15,15 +15,23 @@ const Rpi5 = require("./devices/rpi5");
 const RandomData = require("./devices/randomData");
 const SCD30 = require("./devices/scd30");
 const Http = require("./telemetry/http");
+const Mqtt = require("./telemetry/mqtt");
+
+// create class instances
+// sensors:
+const rpi5 = new Rpi5();
+const randomData = new RandomData();
+const scd30 = new SCD30(process.env.RASPI_SCD30_EXEC_PATH);
+// telemetry:
+const http = new Http();
+const mqtt = new Mqtt({
+  host: process.env.MQTT_HOST,
+  port: process.env.MQTT_PORT,
+});
 
 // looping main function
 const main = async () => {
   // create data message, read values and send to backend
-
-  // create class instances
-  const rpi5 = new Rpi5();
-  const randomData = new RandomData();
-  const scd30 = new SCD30(process.env.RASPI_SCD30_EXEC_PATH);
 
   // get current timestamp
   const m = moment();
@@ -69,12 +77,20 @@ const main = async () => {
   );
 
   // send to cloud backend
-  Http.postJson(
+
+  // http
+  http.postJson(
     "http://" +
       (process.env.SERVER_IP || "127.0.0.1") +
       ":" +
       (process.env.SERVER_PORT || 9999) +
       "/data",
+    data
+  );
+
+  // mqtt
+  mqtt.publishJson(
+    process.env.MQTT_TELEMETRY_TOPIC || "iot-test/telemetry",
     data
   );
 };

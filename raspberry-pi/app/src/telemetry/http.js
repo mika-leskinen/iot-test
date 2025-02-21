@@ -1,5 +1,5 @@
 class Http {
-  static async postJson(url, data) {
+  async postJson(url, data) {
     try {
       const responseJson = await fetch(url, {
         method: "POST",
