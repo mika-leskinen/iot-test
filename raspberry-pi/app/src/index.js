@@ -23,7 +23,7 @@ const main = async () => {
   // create class instances
   const rpi5 = new Rpi5();
   const randomData = new RandomData();
-  const scd30 = new SCD30(process.env.SCD30_EXEC_PATH);
+  const scd30 = new SCD30(process.env.RASPI_SCD30_EXEC_PATH);
 
   // get current timestamp
   const m = moment();

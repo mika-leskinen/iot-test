@@ -18,7 +18,7 @@ Note: modify the example program (scd30_i2c_example_usage.c) so that it only mak
      error = scd30_blocking_read_measurement_data(&co2_concentration, &temperature, &humidity);
 
 4. Re-compile
-5. Copy the resulting binary to app/scd30 (or put absolute path to SCD30_EXEC_PATH environment variable)
+5. Copy the resulting binary to app/scd30 (or put absolute path to RASPI_SCD30_EXEC_PATH environment variable)
 
 Output from running the program should be like:
 co2_concentration: 590.87 temperature: 26.45 humidity: 18.69

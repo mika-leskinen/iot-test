@@ -51,7 +51,7 @@ app.post("/data", (req, res) => {
 });
 
 // default port 9999
-const port = process.env.PORT || 9999;
+const port = process.env.SERVER_HTTP_PORT || 9999;
 
 // start express server:
 app.listen(port, () => {
