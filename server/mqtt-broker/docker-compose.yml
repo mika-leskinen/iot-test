@@ -1,0 +1,7 @@
+services:
+  iot-test-mqtt-broker:
+    image: iot-test-mqtt-broker
+    container_name: iot-test-mqtt-broker
+    restart: unless-stopped
+    ports:
+      - 1883:1883
