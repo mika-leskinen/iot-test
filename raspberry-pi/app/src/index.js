@@ -1,13 +1,26 @@
+// see https://www.npmjs.com/package/dotenv
+require("dotenv").config();
+
+// see https://nodejs.org/api/fs.html#file-system
 const fs = require("fs/promises");
+
+// see https://www.npmjs.com/package/moment
 const moment = require("moment");
+
+// also see https://www.freecodecamp.org/news/requiring-modules-in-node-js-everything-you-need-to-know-e7fbd119be8/
 const Rpi5 = require("./devices/rpi5");
 const RandomData = require("./devices/randomData");
 const SCD30 = require("./devices/scd30");
-const HttpPost = require("./data-handling/http-post");
+const Http = require("./telemetry/http");
 
 // looping main function
 const main = async () => {
   // create data message, read values and send to backend
+
+  // create class instances
+  const rpi5 = new Rpi5();
+  const randomData = new RandomData();
+  const scd30 = new SCD30(process.env.SCD30_EXEC_PATH);
 
   // get current timestamp
   const m = moment();
@@ -17,17 +30,20 @@ const main = async () => {
   let data = { ts: m.valueOf(), values: {} };
 
   // get Rpi CPU temperature
-  data.values["RPI5_cpu_temp"] = (await Rpi5.getCpuTemp())?.cpuTemp;
+  data.values["RPI5_cpu_temp"] = (await rpi5.getCpuTemp())?.cpuTemp;
 
   // get random float value
   data.values["TEST_random_float"] = (
-    await RandomData.getRandomFloat(20, 200)
+    await randomData.getRandomFloat(20, 200)
   )?.randomFloat;
 
   // get SCD30 values
   // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+  // also see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+
+  // get the values
   const { co2_concentration, temperature, humidity } =
-    (await SCD30.getValues()) || {};
+    (await scd30.getValues()) || {};
 
   data.values = {
     ...data.values,
@@ -50,7 +66,7 @@ const main = async () => {
   );
 
   // send to cloud backend
-  HttpPost.sendJson(
+  Http.postJson(
     "http://" +
       (process.env.SERVER_IP || "127.0.0.1") +
       ":" +

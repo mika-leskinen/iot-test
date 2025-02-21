@@ -1,5 +1,5 @@
-class HttpPost {
-  static async sendJson(url, data) {
+class Http {
+  static async postJson(url, data) {
     try {
       const responseJson = await fetch(url, {
         method: "POST",
@@ -11,7 +11,9 @@ class HttpPost {
 
       if (!responseJson.ok) {
         console.error(
-          "httpPost - sendJson: err: http response status " +
+          "http - postJson (" +
+            url +
+            "): err: http response status " +
             responseJson.status
         );
         return false;
@@ -21,17 +23,17 @@ class HttpPost {
 
       if (response?.msg !== "OK") {
         console.error(
-          "httpPost - sendJson: err: http response " + response.msg
+          "http - postJson (" + url + "): err: http response " + response.msg
         );
         return false;
       }
-      console.log("httpPost - sendJson: OK");
+      console.log("http - postJson (" + url + "): OK");
       return true;
     } catch (err) {
-      console.error("httpPost - sendJson: err: " + err.message);
+      console.error("http - postJson (" + url + "): err: " + err.message);
       return false;
     }
   }
 }
 
-module.exports = HttpPost;
+module.exports = Http;

@@ -6,3 +6,4 @@ node_modules
 *.dat
 /server/influxdb/data
 /server/influxdb/config
+scd30

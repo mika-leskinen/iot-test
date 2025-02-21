@@ -7,7 +7,7 @@ class Rpi5 {
   // These work with Raspberry Pi 5 (and probably 4)
 
   // get CPU (or GPU? or both) temperature
-  static async getCpuTemp() {
+  async getCpuTemp() {
     // see https://stackoverflow.com/questions/20643470/execute-a-command-line-binary-with-node-js
     // see also https://www.geeksforgeeks.org/awk-command-unixlinux-examples/
     const { stdout, stderr } = await exec(

@@ -18,19 +18,20 @@ Note: modify the example program (scd30_i2c_example_usage.c) so that it only mak
      error = scd30_blocking_read_measurement_data(&co2_concentration, &temperature, &humidity);
 
 4. Re-compile
+5. Copy the resulting binary to app/scd30 (or put absolute path to SCD30_EXEC_PATH environment variable)
 
 Output from running the program should be like:
 co2_concentration: 590.87 temperature: 26.45 humidity: 18.69
 */
 
-// path to compiled scd30 example binary
-const execPath =
-  "/home/iot/devel/raspberry-pi-i2c-scd30/scd30_i2c_example_usage";
-
 class SCD30 {
-  static async getValues() {
+  constructor(execPath = "./scd30") {
+    this.execPath = execPath;
+  }
+
+  async getValues() {
     try {
-      const { stdout, stderr } = await exec(execPath);
+      const { stdout, stderr } = await exec(this.execPath);
 
       if (stderr) {
         console.error("scd30 - err: " + stderr);
