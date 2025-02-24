@@ -83,7 +83,7 @@ const main = async () => {
     "http://" +
       (process.env.SERVER_IP || "127.0.0.1") +
       ":" +
-      (process.env.SERVER_PORT || 9999) +
+      (process.env.SERVER_HTTP_PORT || 9999) +
       "/data",
     data
   );

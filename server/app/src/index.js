@@ -3,24 +3,29 @@ require("dotenv").config();
 // "logging middleware"
 require("./logging/console");
 
-const express = require("express");
-const SQLite = require("./datastore/sqlite3");
-const InfluxDB = require("./datastore/influxdb");
-
-// see https://expressjs.com/en/starter/installing.html
-const app = express();
-app.use(express.json());
+//--- datastores:
 
 // sqlite3 database
+const SQLite = require("./datastore/sqlite3");
 const sqlite3 = new SQLite("./test.sqlite3");
 sqlite3.init();
 
 // influxdb database
+const InfluxDB = require("./datastore/influxdb");
 const influxdb = new InfluxDB(
   process.env.INFLUX_HOST || "localhost",
   process.env.INFLUX_PORT || 8086,
   process.env.INFLUX_DB_NAME || "iot-test-influxdb"
 );
+
+//--- message listeners:
+
+// http
+const express = require("express");
+
+// see https://expressjs.com/en/starter/installing.html
+const app = express();
+app.use(express.json());
 
 // default GET response
 app.get("/", (req, res) => {
@@ -56,4 +61,24 @@ const port = process.env.SERVER_HTTP_PORT || 9999;
 // start express server:
 app.listen(port, () => {
   console.log("Listen: " + port);
+});
+
+// mqtt
+const Mqtt = require("./telemetry/mqtt");
+
+const mqtt = new Mqtt({
+  host: process.env.MQTT_HOST || "127.0.0.1",
+  port: process.env.MQTT_PORT || 1883,
+});
+
+const topicName = process.env.MQTT_TELEMETRY_TOPIC || "iot-test/telemetry";
+mqtt.client.subscribe(topicName);
+
+mqtt.client.on("message", (topic, message) => {
+  if (topic === topicName) {
+    console.log(
+      "mqtt - received message on [" + topic + "]: " + message.toString()
+    );
+    // TODO: save data to database
+  }
 });
