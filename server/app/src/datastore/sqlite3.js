@@ -45,7 +45,7 @@ class SQLite {
   // dataObj format should be {ts: TS, values: {KEY: VAL}}
   // NOTE: see https://stackoverflow.com/questions/15367696/storing-json-in-database-vs-having-a-new-column-for-each-key
   // NOTE: measurementName for consistency
-  async saveTimeseries(measurementName = "unknown", dataObj) {
+  async saveTimeseries(dataObj) {
     // extract ms timestamp from data:
     const ts = dataObj.ts;
 

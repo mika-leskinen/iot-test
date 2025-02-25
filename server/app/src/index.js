@@ -12,11 +12,12 @@ sqlite3.init();
 
 // influxdb database
 const InfluxDB = require("./datastore/influxdb");
-const influxdb = new InfluxDB(
-  process.env.INFLUX_HOST || "localhost",
-  process.env.INFLUX_PORT || 8086,
-  process.env.INFLUX_DB_NAME || "iot-test-influxdb"
-);
+const influxdb = new InfluxDB({
+  dbHost: process.env.INFLUX_HOST || "localhost",
+  dbPort: process.env.INFLUX_PORT || 8086,
+  dbName: process.env.INFLUX_DB_NAME || "iot-test-influxdb",
+  measurementName: "iot-test-raspberrypi",
+});
 
 //--- message listeners:
 
@@ -27,18 +28,13 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-// default GET response
-app.get("/", (req, res) => {
-  return res.json({ msg: "OK" });
-});
-
 // data POST endpoint
 app.post("/data", (req, res) => {
   // get data object from request as {ts: TS, values: {key: VAL}}
   let data = req.body;
   try {
     // insert to sqlite3 database
-    sqlite3.saveTimeseries("iot-test-raspberrypi", data);
+    sqlite3.saveTimeseries(data);
 
     // insert to influxdb database
     influxdb.saveTimeseries("iot-test-raspberrypi", data);
@@ -54,6 +50,11 @@ app.post("/data", (req, res) => {
     return res.status(500).json({ msg: "NOT_OK" });
   }
 });
+
+// http api
+const HttpApi = require("./httpApi");
+const httpApi = new HttpApi({ expressApp: app, influxDb: influxdb });
+httpApi.registerRoutes();
 
 // default port 9999
 const port = process.env.SERVER_HTTP_PORT || 9999;

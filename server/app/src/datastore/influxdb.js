@@ -5,22 +5,39 @@ const Influx = require("influx");
 
 class InfluxDB {
   constructor(
-    dbHost = "localhost",
-    dbPort = 8086,
-    dbName = "iot-test-influxdb"
+    options = {
+      dbHost: "localhost",
+      dbPort: 8086,
+      dbName: "iot-test-influxdb",
+      measurementName: "iot-test-raspberrypi",
+    }
   ) {
+    this.dbHost = options.dbHost;
+    this.dbPort = options.dbPort;
+    this.dbName = options.dbName;
+    this.measurementName = options.measurementName;
+
     console.log(
-      "influxdb - init (" + dbHost + ":" + dbPort + " " + dbName + ")"
+      "influxdb - init (" +
+        this.dbHost +
+        ":" +
+        this.dbPort +
+        " " +
+        this.dbName +
+        " / " +
+        this.measurementName +
+        ")"
     );
+
     // connect to influx
     this.db = new Influx.InfluxDB({
-      host: dbHost,
-      port: dbPort,
-      database: dbName,
+      host: this.dbHost,
+      port: this.dbPort,
+      database: this.dbName,
     });
 
     // create database
-    this.db.createDatabase(dbName).catch((err) => {
+    this.db.createDatabase(this.dbName).catch((err) => {
       // err
       console.error("influxdb - err: " + err.message);
     });
@@ -28,7 +45,7 @@ class InfluxDB {
 
   // save measurements
   // dataObj format should be {ts: TS, values: {KEY: VAL}}
-  async saveTimeseries(measurementName = "unknown", dataObj) {
+  async saveTimeseries(measurementName = this.measurementName, dataObj) {
     try {
       await this.db.writePoints([
         {
