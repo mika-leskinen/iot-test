@@ -52,8 +52,9 @@ app.post("/data", (req, res) => {
 });
 
 // http api
+// options.datastore should have async method getTimeseries(startTs, endTs) that returns an array like [{ts: TS, values: {KEY: VAL}}]
 const HttpApi = require("./httpApi");
-const httpApi = new HttpApi({ expressApp: app, influxDb: influxdb });
+const httpApi = new HttpApi({ expressApp: app, datastore: influxdb });
 httpApi.registerRoutes();
 
 // default port 9999
