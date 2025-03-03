@@ -90,18 +90,3 @@ class SQLite {
 }
 
 module.exports = SQLite;
-
-/*
-// usage:
-
-const db = new SQLite();
-
-db.query("SELECT datetime() as dt")
-  .then((result) => console.log(result))
-  .catch((err) => console.error(err.message));
-
-// or:
-
-const result = await db.query("SELECT datetime() as dt");
-
-*/

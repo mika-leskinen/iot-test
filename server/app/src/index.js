@@ -22,7 +22,7 @@ const influxdb = new InfluxDB({
 const datastores = [sqlite3, influxdb];
 
 // http api
-// options.datastore items should have async methods saveTimeseries(dataObj) and getTimeseries(startTs, endTs)
+// options.datastores items should have async methods saveTimeseries(dataObj) and getTimeseries(startTs, endTs)
 // NOTE: this saves data to all datastores, fetches data from the first one
 const HttpApi = require("./httpApi");
 
