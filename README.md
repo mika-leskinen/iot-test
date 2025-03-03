@@ -178,3 +178,50 @@ ssh USER@192.168.255.11
 ```bash
 # TODO
 ```
+
+## Project requirements
+
+Current state:
+
+- ✅ Done
+- ❌ Not done
+
+### Grade 1
+
+- ❌ General
+  - ✅ N/A
+  - ❌ Architectural design document (all components, data flow, services)
+  - ❌ Separate architectural design document for IoT device (applications and services)
+  - ✅ N/A
+  - ✅ N/A
+
+### Grade 2
+
+- ✅ IoT device features:
+  - ✅ Measurement data is read from sensors
+  - ✅ Measurement data is stored locally
+  - ✅ Measurement data is sent to the cloud
+
+### Grade 3
+
+- ❌ Cloud service features:
+  - ✅ Cloud services are initialized as per architectural design document
+  - ✅ Measurement data is successfully received from IoT device and stored in the cloud
+  - ✅ Measurement data is saved to a secondary (archive) storage in the cloud
+  - ❌ Measurement data is received from authorized devices only
+
+### Grade 4
+
+- ❌ API features
+  - ✅ Cloud service has an API for fetching measurement data
+  - ❌ API provides aggregated data (hourly average) for a selected measurement
+  - ❌ API has an authentication/authorization mechanism in place
+
+### Grade 5
+
+- ❌ System has a feature for logging alarm events when a given measurement value is outside allowed limits
+- ❌ System has a web-based user interface with the following features:
+  - ❌ Device/measurement selection
+  - ❌ Displaying selected measurements within a selected timespan in a chart
+  - ❌ Exporting selected measurements to a CSV file
+  - ❌ Displaying logged alarm events
