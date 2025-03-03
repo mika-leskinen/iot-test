@@ -1,5 +1,6 @@
 const moment = require("moment");
 const express = require("express");
+const cors = require("cors");
 
 // see https://expressjs.com/en/starter/installing.html
 
@@ -7,6 +8,13 @@ class HttpApi {
   constructor(options = { port: 9999, datastores: null }) {
     this.app = express();
     this.app.use(express.json());
+
+    // TODO: cors
+    this.app.use(
+      cors({
+        origin: "*",
+      })
+    );
 
     this.port = options.port;
     this.datastores = options.datastores;
