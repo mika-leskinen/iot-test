@@ -12,58 +12,27 @@ sqlite3.init();
 
 // influxdb database
 const InfluxDB = require("./datastore/influxdb");
-const influxdb = new InfluxDB(
-  process.env.INFLUX_HOST || "localhost",
-  process.env.INFLUX_PORT || 8086,
-  process.env.INFLUX_DB_NAME || "iot-test-influxdb"
-);
-
-//--- message listeners:
-
-// http
-const express = require("express");
-
-// see https://expressjs.com/en/starter/installing.html
-const app = express();
-app.use(express.json());
-
-// default GET response
-app.get("/", (req, res) => {
-  return res.json({ msg: "OK" });
+const influxdb = new InfluxDB({
+  dbHost: process.env.INFLUX_HOST || "localhost",
+  dbPort: process.env.INFLUX_PORT || 8086,
+  dbName: process.env.INFLUX_DB_NAME || "iot-test-influxdb",
+  measurementName: "iot-test-raspberrypi",
 });
 
-// data POST endpoint
-app.post("/data", (req, res) => {
-  // get data object from request as {ts: TS, values: {key: VAL}}
-  let data = req.body;
-  try {
-    // insert to sqlite3 database
-    sqlite3.saveTimeseries("iot-test-raspberrypi", data);
+const datastores = [sqlite3, influxdb];
 
-    // insert to influxdb database
-    influxdb.saveTimeseries("iot-test-raspberrypi", data);
+// http api
+// options.datastore items should have async methods saveTimeseries(dataObj) and getTimeseries(startTs, endTs)
+// NOTE: this saves data to all datastores, fetches data from the first one
+const HttpApi = require("./httpApi");
 
-    console.log("main - db data write: OK");
-
-    // send JSON response:
-    return res.json({ msg: "OK" });
-  } catch (err) {
-    console.error("main - err: " + err.message);
-
-    // send JSON error message
-    return res.status(500).json({ msg: "NOT_OK" });
-  }
-});
-
-// default port 9999
-const port = process.env.SERVER_HTTP_PORT || 9999;
-
-// start express server:
-app.listen(port, () => {
-  console.log("Listen: " + port);
+new HttpApi({
+  port: process.env.PORT || 9999,
+  datastores,
 });
 
 // mqtt
+// TODO: refactor
 const Mqtt = require("./telemetry/mqtt");
 
 const mqtt = new Mqtt({
@@ -79,6 +48,11 @@ mqtt.client.on("message", (topic, message) => {
     console.log(
       "mqtt - received message on [" + topic + "]: " + message.toString()
     );
-    // TODO: save data to database
+    // save data to database
+    /*
+    for (const ds of datastores) {
+      ds.saveTimeseries(JSON.parse(message.toString()));
+    }
+    */
   }
 });

@@ -1,0 +1,23 @@
+### 200
+GET http://localhost:9999/api/timeseries
+
+### 200
+GET http://localhost:9999/api/timeseries?startTs=2025-02-25 10:55:00&endTs=2025-02-25 10:56:00
+
+### 200
+GET http://localhost:9999/api/timeseries?startTs=1740473700000&endTs=1740473760000
+
+### 400
+GET http://localhost:9999/api/timeseries?startTs=xxxxx&endTs=yyyyy
+
+### 404
+GET http://localhost:9999
+
+### post telemetry data
+POST http://localhost:9999/data
+Content-Type: application/json
+
+{
+  "ts": 1740578563000,
+  "values": {"testvalue" : 55.667}
+}

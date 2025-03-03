@@ -1,7 +1,11 @@
 const sqlite3 = require("sqlite3");
+const moment = require("moment");
 
 // see https://www.sqlite.org/
 // also see https://github.com/TryGhost/node-sqlite3/wiki/API
+
+// max number of rows to retrieve from db
+const limitRows = 500;
 
 class SQLite {
   constructor(filename = "./test.sqlite3") {
@@ -44,8 +48,8 @@ class SQLite {
   // save measurements
   // dataObj format should be {ts: TS, values: {KEY: VAL}}
   // NOTE: see https://stackoverflow.com/questions/15367696/storing-json-in-database-vs-having-a-new-column-for-each-key
-  // NOTE: measurementName for consistency
-  async saveTimeseries(measurementName = "unknown", dataObj) {
+  // TODO: handle cases where data with given timestamp already exists
+  async saveTimeseries(dataObj) {
     // extract ms timestamp from data:
     const ts = dataObj.ts;
 
@@ -59,8 +63,29 @@ class SQLite {
   }
 
   // get measurements
-  async getTimeseries() {
-    // TODO: getTimeseries
+  async getTimeseries(startTs, endTs) {
+    // convert times to unix ms format
+    const startMs = moment(startTs).valueOf();
+    const endMs = moment(endTs).valueOf();
+
+    // get values from db
+    const results = await this.query(
+      "SELECT * FROM measurements WHERE ts >= ? and ts <= ? ORDER BY ts ASC LIMIT " +
+        limitRows,
+      [startMs, endMs]
+    );
+
+    // format data as [{ts: TS, values: {KEY: VAL}}]
+    let dataArr = [];
+    for (const row of results) {
+      try {
+        dataArr.push({ ts: row.ts, values: JSON.parse(row.json) });
+      } catch (err) {
+        console.error("sqlite3 - err: " + err.message);
+      }
+    }
+
+    return dataArr;
   }
 }
 

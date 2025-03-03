@@ -8,6 +8,8 @@ const moment = require("moment");
 const originalLog = console.log;
 const originalError = console.error;
 
+console.realLog = originalLog;
+
 // override log
 console.log = (msg) => {
   originalLog(
