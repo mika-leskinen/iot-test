@@ -49,20 +49,16 @@ class InfluxDB {
 
   // save measurements
   // dataObj format should be {ts: TS, values: {KEY: VAL}}
-  async saveTimeseries(measurementName = this.measurementName, dataObj) {
-    try {
-      // TODO: timestamps don't seem to work exactly right (precision or what?)
-      await this.db.writePoints([
-        {
-          measurement: measurementName,
-          timestamp: dataObj.ts,
-          fields: dataObj.values,
-        },
-      ]);
-      console.log("influxdb - writePoints OK");
-    } catch (err) {
-      console.error("influxdb - err: " + err.message);
-    }
+  async saveTimeseries(dataObj) {
+    // TODO: timestamps don't seem to work exactly
+    await this.db.writePoints([
+      {
+        measurement: this.measurementName,
+        timestamp: dataObj.ts,
+        fields: dataObj.values,
+      },
+    ]);
+    console.log("influxdb - writePoints OK");
   }
 
   // get measurements between startTs and endTs
@@ -71,6 +67,9 @@ class InfluxDB {
     const startMs = moment(startTs).valueOf();
     const endMs = moment(endTs).valueOf();
 
+    // do the query
+    // should be safe to pass moment().valueOf() results directly to query
+    // see https://www.w3schools.com/sql/sql_injection.asp
     let results = await this.db.query(
       `SELECT * FROM "${this.measurementName}" WHERE time >= ${startMs}ms AND time <= ${endMs}ms ORDER BY time ASC LIMIT ${limitRows}`
     );

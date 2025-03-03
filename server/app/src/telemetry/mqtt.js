@@ -18,7 +18,13 @@ class Mqtt {
         protocol: this.protocol,
       });
 
-      console.log("mqtt - connected: " + this.host + ":" + this.port);
+      /*
+      if (this.client.connected) {
+        console.log("mqtt - connected: " + this.host + ":" + this.port);
+      } else {
+        console.error("mqtt - err: not connected");
+      }
+        */
     } catch (err) {
       console.error("mqtt - err: " + err.message);
     }
@@ -27,8 +33,12 @@ class Mqtt {
   // send data to broker as json
   publishJson(topic = "iot-test/telemetry", data) {
     try {
-      this.client.publish(topic, JSON.stringify(data));
-      console.log("mqtt - publish OK");
+      if (this.client.connected) {
+        this.client.publish(topic, JSON.stringify(data));
+        console.log("mqtt - publish OK");
+      } else {
+        console.error("mqtt - publish err (" + topic + "): not connected");
+      }
     } catch (err) {
       console.error("mqtt - publish err (" + topic + "): " + err.message);
     }

@@ -1,19 +1,60 @@
 const moment = require("moment");
+const express = require("express");
+
+// see https://expressjs.com/en/starter/installing.html
 
 class HttpApi {
-  constructor(options = { expressApp: null, datastore: null }) {
-    if (options.expressApp == null || options.datastore == null) {
-      console.log("http api - constructor err");
+  constructor(options = { port: 9999, datastores: null }) {
+    this.app = express();
+    this.app.use(express.json());
+
+    this.port = options.port;
+    this.datastores = options.datastores;
+
+    if (!(this.datastores?.length > 0)) {
+      console.error("http api - constructor err");
       return;
     }
 
-    this.app = options.expressApp;
-    this.datastore = options.datastore;
-    console.log("http api - init");
+    // start express server:
+    this.app.listen(this.port, () => {
+      console.log("Listen: " + this.port);
+    });
+
+    // create routes
+    this.registerRoutes();
   }
 
   // routes
   registerRoutes() {
+    // POST timeseries data
+    this.app.post("/data", async (req, res) => {
+      // get data object from request as {ts: TS, values: {key: VAL}}
+      let data = req.body;
+
+      if (data?.ts == null) {
+        console.error("http api - post: 400");
+        return res.status(400).json({ msg: "BAD_REQUEST" });
+      }
+
+      try {
+        console.log("http api - db data write");
+
+        // insert to datastores
+        for (const ds of this.datastores) {
+          await ds.saveTimeseries(data);
+        }
+
+        // send JSON response:
+        return res.json({ msg: "OK" });
+      } catch (err) {
+        console.error("main - err: " + err.message);
+
+        // send JSON error message
+        return res.status(500).json({ msg: "NOT_OK" });
+      }
+    });
+
     // GET timeseries data
     this.app.get("/api/timeseries", async (req, res) => {
       try {
@@ -48,11 +89,9 @@ class HttpApi {
         const startTs = startMoment.valueOf();
         const endTs = endMoment.valueOf();
 
-        // should be safe to pass moment().valueOf() results directly to query
-        // see https://www.w3schools.com/sql/sql_injection.asp
-        // call async getTimeseries(start, end) of datastore instance (influxdb, sqlite3 or whatever that has such method)
+        // call async getTimeseries(start, end) of first datastore (influxdb, sqlite3 or whatever that has such method)
         // NOTE: promise should return array in the format [{ts: TS, values: {KEY: VAL}}]
-        const data = await this.datastore.getTimeseries(startTs, endTs);
+        const data = await this.datastores[0].getTimeseries(startTs, endTs);
 
         // return as json
         return res.json(data);

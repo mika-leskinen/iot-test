@@ -52,7 +52,6 @@ class SQLite {
   async saveTimeseries(dataObj) {
     // extract ms timestamp from data:
     const ts = dataObj.ts;
-    console.log(ts);
 
     // remove ms timestamp from data:
     delete dataObj.ts;

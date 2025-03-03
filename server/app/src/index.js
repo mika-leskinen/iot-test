@@ -19,53 +19,20 @@ const influxdb = new InfluxDB({
   measurementName: "iot-test-raspberrypi",
 });
 
-//--- message listeners:
-
-// http
-const express = require("express");
-
-// see https://expressjs.com/en/starter/installing.html
-const app = express();
-app.use(express.json());
-
-// data POST endpoint
-app.post("/data", (req, res) => {
-  // get data object from request as {ts: TS, values: {key: VAL}}
-  let data = req.body;
-  try {
-    // insert to sqlite3 database
-    sqlite3.saveTimeseries(data);
-
-    // insert to influxdb database
-    influxdb.saveTimeseries("iot-test-raspberrypi", data);
-
-    console.log("main - db data write: OK");
-
-    // send JSON response:
-    return res.json({ msg: "OK" });
-  } catch (err) {
-    console.error("main - err: " + err.message);
-
-    // send JSON error message
-    return res.status(500).json({ msg: "NOT_OK" });
-  }
-});
+const datastores = [sqlite3, influxdb];
 
 // http api
-// options.datastore should have async method getTimeseries(startTs, endTs) that returns an array like [{ts: TS, values: {KEY: VAL}}]
+// options.datastore items should have async methods saveTimeseries(dataObj) and getTimeseries(startTs, endTs)
+// NOTE: this saves data to all datastores, fetches data from the first one
 const HttpApi = require("./httpApi");
-const httpApi = new HttpApi({ expressApp: app, datastore: influxdb });
-httpApi.registerRoutes();
 
-// default port 9999
-const port = process.env.SERVER_HTTP_PORT || 9999;
-
-// start express server:
-app.listen(port, () => {
-  console.log("Listen: " + port);
+new HttpApi({
+  port: process.env.PORT || 9999,
+  datastores,
 });
 
 // mqtt
+// TODO: refactor
 const Mqtt = require("./telemetry/mqtt");
 
 const mqtt = new Mqtt({
@@ -81,6 +48,11 @@ mqtt.client.on("message", (topic, message) => {
     console.log(
       "mqtt - received message on [" + topic + "]: " + message.toString()
     );
-    // TODO: save data to database
+    // save data to database
+    /*
+    for (const ds of datastores) {
+      ds.saveTimeseries(JSON.parse(message.toString()));
+    }
+    */
   }
 });
