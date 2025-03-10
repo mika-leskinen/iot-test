@@ -7,18 +7,9 @@ const nValues = 50;
 const LatestDataTable = () => {
   const { data, loading } = useLatestData(nValues);
 
-  if (loading) {
-    return (
-      <p>
-        <i>Imagine a loading spinner here...</i>
-      </p>
-    );
-  }
-
   // get unique keys to be used as table headers
-  // (single measurement might not have values for all keys)
   let keys = [];
-  for (const row of data) {
+  for (const row of data || []) {
     for (const key of Object.keys(row.values)) {
       if (!keys.includes(key)) keys.push(key);
     }
@@ -26,7 +17,12 @@ const LatestDataTable = () => {
 
   return (
     <div>
-      {data.length <= 0 ? (
+      <h1 className="fs-3 mb-3">Latest Data</h1>
+      {loading ? (
+        <p>
+          <i>Imagine a loading spinner here...</i>
+        </p>
+      ) : data?.length <= 0 ? (
         <p>No data available.</p>
       ) : (
         <table className="table table-sm">
