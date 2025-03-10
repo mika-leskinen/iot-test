@@ -19,7 +19,7 @@ const influxdb = new InfluxDB({
   measurementName: "iot-test-raspberrypi",
 });
 
-const datastores = [sqlite3, influxdb];
+const datastores = [sqlite3 /*, influxdb*/];
 
 // http api
 // options.datastores items should have async methods saveTimeseries(dataObj) and getTimeseries(startTs, endTs)

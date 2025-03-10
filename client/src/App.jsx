@@ -1,11 +1,14 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import React from "react";
+import LatestDataTable from "./components/LatestDataTable";
+import Header from "./components/Header";
 
 const App = () => {
   return (
     <>
-      <div>
-        <p>TODO</p>
-      </div>
+      <Header></Header>
+      <LatestDataTable></LatestDataTable>
     </>
   );
 };

@@ -18,6 +18,6 @@ POST http://localhost:9999/data
 Content-Type: application/json
 
 {
-  "ts": 1740578563000,
+  "ts": 1741608788000,
   "values": {"testvalue" : 55.667}
 }
