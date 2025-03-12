@@ -7,10 +7,11 @@ import LatestDataTable from "./components/LatestDataTable";
 import Alarms from "./components/Alarms";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Container } from "react-bootstrap";
 
 const App = () => {
   return (
-    <>
+    <Container className="vh-100">
       <BrowserRouter>
         <Header></Header>
         <Routes>
@@ -19,7 +20,7 @@ const App = () => {
           <Route path="/alarms" Component={Alarms}></Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </Container>
   );
 };
 
