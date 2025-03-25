@@ -1,0 +1,65 @@
+@startuml "raspberry-pi"
+
+component "Raspberry Pi" {
+  component "Docker" {
+    component "nodejs app" {
+      component randomData.js [
+        devices/randomData.js
+        - randomFloat
+      ]
+
+      component rpi5.js [
+        devices/rpi5.js
+        - CPU temperature
+      ]
+
+      component scd30.js [
+        devices/scd30.js
+        - CO2
+        - temperature
+        - humidity
+      ]
+
+      component http [
+        telemetry/http.js
+      ]
+
+      component mqtt [
+        telemetry/mqtt.js
+      ]
+
+      component console [
+        logging/console.js
+      ]
+
+      component index.js
+    }
+    component "OpenVPN client"
+  }
+
+  component "SCD30 executable"
+  
+  component datafiles [
+    local data files
+  ]
+  
+  component "OpenSSH server"
+}
+
+component "SCD30 Sensor"
+
+' connections
+
+[scd30.js] --> [index.js]
+[randomData.js] --> [index.js]
+[rpi5.js] --> [index.js]
+
+[index.js] --> mqtt
+[index.js] --> http
+[index.js] --> datafiles
+[index.js] --> [console]
+
+[SCD30 executable] <-- [SCD30 Sensor] : I2C
+[scd30.js] <- [SCD30 executable]
+
+@enduml

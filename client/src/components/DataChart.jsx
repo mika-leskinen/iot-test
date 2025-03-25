@@ -62,14 +62,14 @@ const DataChart = () => {
 
   return (
     <div className="align-items-center w-100 h-100">
-      <h1 className="fs-3 mb-3">Data Chart</h1>
+      <h1 className="fs-3 mb-4">Data Chart</h1>
       {loading ? (
         <p>
           <i>Imagine a loading spinner here...</i>
         </p>
       ) : (
         <div className="h-100">
-          <Row className="m-0 p-0 mb-5 pb-5">
+          <Row className="m-0 p-0 mb-3 pb-3">
             {/* measurement selection */}
             <Col sm={12} lg={3}>
               <Dropdown

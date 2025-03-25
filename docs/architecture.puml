@@ -1,0 +1,42 @@
+@startuml "architecture"
+
+skinparam padding 5
+
+component "Cloud Server (Azure)" {
+  component "Backend Application"
+  database "InfluxDB Database"
+  database "SQLite3 Database"
+  component "MQTT Broker"
+'  component "OpenVPN Server"
+'  portIn vpn
+  portIn "8883/mqtts"
+  portIn "443/https"
+}
+
+component "Public Internet" {
+  component "Client Application(s)"
+'  component "Dev Machine"
+  component "IoT Devices" {
+    component "Raspberry Pi"
+    component "SCD30 Co2 Sensor"
+  }
+}
+
+[SCD30 Co2 Sensor] -> [Raspberry Pi] : I2C
+[Raspberry Pi] -[#blue]-> [8883/mqtts]
+[8883/mqtts] -[#blue]-> [MQTT Broker]
+[MQTT Broker] --[#blue]> [Backend Application]
+[Backend Application] <--> [InfluxDB Database]
+[Backend Application] <--> [SQLite3 Database]
+[Client Application(s)] <-[#green]-> [443/https]
+[443/https] <-[#green]-> [Backend Application]
+
+/'
+[Raspberry Pi] <-[#red]-> [vpn] : vpn
+[Backend Application] <-[#red]-> [OpenVPN Server] : vpn
+[MQTT Broker] <-[#red]-> [OpenVPN Server] : vpn
+[Dev Machine] <-[#red]-> [vpn] : vpn
+[vpn] <-[#red]-> [OpenVPN Server] : vpn
+'/
+
+@enduml

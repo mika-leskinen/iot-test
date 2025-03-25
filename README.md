@@ -188,10 +188,10 @@ Current state:
 
 ### Grade 1
 
-- ❌ General
+- ✅ General
   - ✅ N/A
-  - ❌ Architectural design document (all components, data flow, services)
-  - ❌ Separate architectural design document for IoT device (applications and services)
+  - ✅ Architectural design document (all components, data flow, services)
+  - ✅ Separate architectural design document for IoT device (applications and services)
   - ✅ N/A
   - ✅ N/A
 
