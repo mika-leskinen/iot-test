@@ -26,9 +26,13 @@ const datastores = [sqlite3 /*, influxdb*/];
 // NOTE: this saves data to all datastores, fetches data from the first one
 const HttpApi = require("./httpApi");
 
+// supersecret auth token to block unauthorized devices
+const authToken = process.env.DEVICE_AUTH_TOKEN;
+
 new HttpApi({
-  port: process.env.PORT || 9999,
+  port: process.env.HTTP_PORT || 9999,
   datastores,
+  authToken,
 });
 
 // mqtt

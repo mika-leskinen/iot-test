@@ -18,8 +18,9 @@ class HttpApi {
 
     this.port = options.port;
     this.datastores = options.datastores;
+    this.authToken = options.authToken;
 
-    if (!(this.datastores?.length > 0)) {
+    if (!(this.datastores?.length > 0) || !(this.authToken?.length > 0)) {
       console.error("http api - constructor err");
       return;
     }
@@ -37,6 +38,16 @@ class HttpApi {
   registerRoutes() {
     // POST timeseries data
     this.app.post("/data", async (req, res) => {
+      // check if device is authorized
+      // token should be sent as header "X-Authorization"
+      // NOTE: seems like header names are all lowercase here
+      if (!(req.headers?.["x-authorization"] === this.authToken)) {
+        console.error(
+          "http api - err: unauthorized device " + JSON.stringify(req.headers)
+        );
+        return res.status(401).json({ msg: "UNAUTHORIZED" });
+      }
+
       // get data object from request as {ts: TS, values: {key: VAL}}
       let data = req.body;
 
@@ -56,7 +67,7 @@ class HttpApi {
         // send JSON response:
         return res.json({ msg: "OK" });
       } catch (err) {
-        console.error("main - err: " + err.message);
+        console.error("http api - err: " + err.message);
 
         // send JSON error message
         return res.status(500).json({ msg: "NOT_OK" });

@@ -1,10 +1,15 @@
 class Http {
+  constructor(options = { authToken: null }) {
+    this.authToken = options.authToken;
+  }
+
   async postJson(url, data) {
     try {
       const responseJson = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-Authorization": this.authToken,
         },
         body: JSON.stringify(data),
       });

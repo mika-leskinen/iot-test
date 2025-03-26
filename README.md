@@ -204,11 +204,11 @@ Current state:
 
 ### Grade 3
 
-- ❌ Cloud service features:
+- ✅ Cloud service features:
   - ✅ Cloud services are initialized as per architectural design document
   - ✅ Measurement data is successfully received from IoT device and stored in the cloud
   - ✅ Measurement data is saved to a secondary (archive) storage in the cloud
-  - ❌ Measurement data is received from authorized devices only
+  - ✅ Measurement data is received from authorized devices only
 
 ### Grade 4
 

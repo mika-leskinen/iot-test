@@ -22,8 +22,10 @@ const Mqtt = require("./telemetry/mqtt");
 const rpi5 = new Rpi5();
 const randomData = new RandomData();
 const scd30 = new SCD30(process.env.RASPI_SCD30_EXEC_PATH);
+
 // telemetry:
-const http = new Http();
+// NOTE: token should be the same on the server side
+const http = new Http({ authToken: process.env.DEVICE_AUTH_TOKEN });
 const mqtt = new Mqtt({
   host: process.env.MQTT_HOST,
   port: process.env.MQTT_PORT,
