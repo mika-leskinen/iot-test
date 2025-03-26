@@ -1,5 +1,7 @@
 @startuml "raspberry-pi"
 
+skinparam padding 10
+
 component "Raspberry Pi" {
   component "Docker" {
     component "nodejs app" {

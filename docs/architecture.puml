@@ -1,6 +1,6 @@
 @startuml "architecture"
 
-skinparam padding 5
+skinparam padding 10
 
 component "Cloud Server (Azure)" {
   component "Backend Application"
