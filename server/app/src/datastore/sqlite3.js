@@ -5,7 +5,7 @@ const moment = require("moment");
 // also see https://github.com/TryGhost/node-sqlite3/wiki/API
 
 // max number of rows to retrieve from db
-const limitRows = 500;
+const limitRows = 5000000;
 
 class SQLite {
   constructor(filename = "./test.sqlite3") {

@@ -2,10 +2,13 @@
 GET http://localhost:9999/api/timeseries
 
 ### 200
-GET http://localhost:9999/api/timeseries?startTs=2025-02-25 10:55:00&endTs=2025-02-25 10:56:00
+GET http://localhost:9999/api/timeseries?startTs=2025-04-01 03:55:00&endTs=2025-04-01 14:56:00
 
 ### 200
 GET http://localhost:9999/api/timeseries?startTs=1740473700000&endTs=1740473760000
+
+### 200 (aggregation)
+GET http://localhost:9999/api/timeseries?startTs=2025-04-01 10:45:00&endTs=2025-04-01 11:47:00&agg=hourly
 
 ### 400
 GET http://localhost:9999/api/timeseries?startTs=xxxxx&endTs=yyyyy
@@ -16,8 +19,9 @@ GET http://localhost:9999
 ### post telemetry data
 POST http://localhost:9999/data
 Content-Type: application/json
+X-Authorization: 
 
 {
-  "ts": 1741608788000,
-  "values": {"testvalue" : 55.667}
+  "ts": 1743496219000,
+  "values": {"testvalue" : 5}
 }

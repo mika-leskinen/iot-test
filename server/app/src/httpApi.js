@@ -1,6 +1,7 @@
 const moment = require("moment");
 const express = require("express");
 const cors = require("cors");
+const { aggregateHourly } = require("../util");
 
 // see https://expressjs.com/en/starter/installing.html
 
@@ -111,9 +112,15 @@ class HttpApi {
         // call async getTimeseries(start, end) of first datastore (influxdb, sqlite3 or whatever that has such method)
         // NOTE: promise should return array in the format [{ts: TS, values: {KEY: VAL}}]
         const data = await this.datastores[0].getTimeseries(startTs, endTs);
+        let result = data;
+
+        // hourly average
+        if (req.query.agg === "hourly") {
+          result = aggregateHourly(data, startTs, endTs);
+        }
 
         // return as json
-        return res.json(data);
+        return res.json((result || []).slice(0, 500));
       } catch (err) {
         console.error("http api - err: " + err.message);
         return res.status(500).json({ msg: "err: " + err.message });

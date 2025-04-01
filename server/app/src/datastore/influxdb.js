@@ -5,7 +5,7 @@ const moment = require("moment");
 // also see https://node-influx.github.io/manual/tutorial.html
 
 // max number of rows to retrieve from db
-const limitRows = 500;
+const limitRows = 5000000;
 
 class InfluxDB {
   constructor(

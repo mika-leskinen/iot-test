@@ -9,11 +9,12 @@ import {
   YAxis,
 } from "recharts";
 import moment from "moment";
-import { Button, Col, Dropdown, Row } from "react-bootstrap";
+import { Button, Col, Dropdown, Form, Row } from "react-bootstrap";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 
 const fetchUrl = (import.meta.env.VITE_API_BASE_URL || "") + "/api/timeseries";
+const defaultAgg = "hourly";
 
 // TODO
 const DataChart = () => {
@@ -23,10 +24,18 @@ const DataChart = () => {
   const [fields, setFields] = useState([]);
   const [startMoment, setStartMoment] = useState(moment().subtract(1, "hour"));
   const [endMoment, setEndMoment] = useState(moment());
+  const [agg, setAgg] = useState(defaultAgg);
 
   // api call
-  const getData = (startTs, endTs) => {
-    fetch(fetchUrl + "?startTs=" + startTs + "&endTs=" + endTs)
+  const getData = (startTs, endTs, agg) => {
+    fetch(
+      fetchUrl +
+        "?startTs=" +
+        startTs +
+        "&endTs=" +
+        endTs +
+        (agg ? "&agg=" + agg : "")
+    )
       .then((res) => res.json())
       .then((res) => {
         setData(
@@ -40,7 +49,11 @@ const DataChart = () => {
 
   // get data for current day by default
   useEffect(() => {
-    getData(moment().subtract(1, "hour").valueOf(), moment().valueOf());
+    getData(
+      moment().subtract(1, "hour").valueOf(),
+      moment().valueOf(),
+      defaultAgg
+    );
   }, []);
 
   // if no field is selected, use the first one by default
@@ -122,11 +135,19 @@ const DataChart = () => {
                 value={endMoment.toDate()}
               ></DateTimePicker>
             </Col>
-            <Col sm={12} lg={2}>
+            <Col sm={12} lg={1}>
+              <Form.Check
+                label="Hourly"
+                id="cb-hourly"
+                onChange={(e) => setAgg(e.target.checked ? "hourly" : "")}
+                checked={agg === "hourly"}
+              ></Form.Check>
+            </Col>
+            <Col sm={12} lg={1}>
               <Button
                 className="form-control"
                 onClick={() =>
-                  getData(startMoment.valueOf(), endMoment.valueOf())
+                  getData(startMoment.valueOf(), endMoment.valueOf(), agg)
                 }
               >
                 Go

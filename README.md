@@ -214,7 +214,7 @@ Current state:
 
 - ❌ API features
   - ✅ Cloud service has an API for fetching measurement data
-  - ❌ API provides aggregated data (hourly average) for a selected measurement
+  - ✅ API provides aggregated data (hourly average) for a selected measurement
   - ❌ API has an authentication/authorization mechanism in place
 
 ### Grade 5
