@@ -172,6 +172,22 @@ class HttpApi {
       }
     });
 
+    // GET alarms
+    this.app.get("/api/alarms", async (req, res) => {
+      // use first datastore with the functionality
+      const alarmDS = this.datastores.find(
+        (d) => d.getAlarms != null && typeof d.getAlarms === "function"
+      );
+      if (alarmDS == null) {
+        return res.status(404).json({ msg: "404 Not Found" });
+      }
+      // get all alarms
+      const result = await alarmDS.getAlarms();
+
+      // return last 500
+      return res.json((result || []).slice(0, 500));
+    });
+
     console.log("http api - registerRoutes");
   }
 }

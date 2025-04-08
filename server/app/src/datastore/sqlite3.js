@@ -87,7 +87,9 @@ class SQLite {
 
   // get alarm events
   async getAlarms() {
-    const results = await this.query("SELECT * from alarms");
+    const results = await this.query(
+      "SELECT * from alarms ORDER BY ts DESC LIMIT " + limitRows
+    );
     return results;
   }
 

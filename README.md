@@ -224,4 +224,4 @@ Current state:
   - ✅ Device/measurement selection
   - ✅ Displaying selected measurements within a selected timespan in a chart
   - ❌ Exporting selected measurements to a CSV file
-  - ❌ Displaying logged alarm events
+  - ✅ Displaying logged alarm events
