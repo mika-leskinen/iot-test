@@ -72,6 +72,44 @@ class HttpApi {
           await ds.saveTimeseries(data);
         }
 
+        // check alarm triggers && create alarms
+        // use first datastore with this functionality
+        const alarmDS = this.datastores.find(
+          (d) => d.saveAlarm != null && typeof d.saveAlarm === "function"
+        );
+        if (alarmDS != null) {
+          // get all triggers
+          const triggers = await alarmDS.getAlarmTriggers();
+          // loop incoming measurement key-values
+          for (const [key, val] of Object.entries(data.values)) {
+            // loop all triggers
+            for (const arr of Object.entries(triggers)) {
+              const t = arr[1];
+              if (t.measurement_name === key) {
+                // check condition (gt or lt)
+                if (
+                  (t.operator === "lt" &&
+                    parseFloat(val) < parseFloat(t.value)) ||
+                  (t.operator === "gt" && parseFloat(val) > parseFloat(t.value))
+                ) {
+                  //create alarm
+                  const msg =
+                    "ALARM: " +
+                    key +
+                    " value " +
+                    val +
+                    " " +
+                    (t.operator == "lt" ? "<" : ">") +
+                    " " +
+                    t.value;
+
+                  alarmDS.saveAlarm(msg);
+                }
+              }
+            }
+          }
+        }
+
         // send JSON response:
         return res.json({ msg: "OK" });
       } catch (err) {

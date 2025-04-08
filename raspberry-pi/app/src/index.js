@@ -47,7 +47,7 @@ const main = async () => {
 
   // get random float value
   data.values["TEST_random_float"] = (
-    await randomData.getRandomFloat(20, 200)
+    await randomData.getRandomFloat(0, 100)
   )?.randomFloat;
 
   // get SCD30 values

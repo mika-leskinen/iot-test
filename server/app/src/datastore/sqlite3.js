@@ -35,6 +35,21 @@ class SQLite {
   init() {
     // TODO: create table statements
     this.query("CREATE TABLE IF NOT EXISTS measurements(ts BIGINT, json TEXT)");
+    this.query("CREATE TABLE IF NOT EXISTS alarms(ts BIGINT, message text)");
+    this.query(
+      "CREATE TABLE IF NOT EXISTS alarm_triggers(measurement_name text, operator text, value float)"
+    );
+
+    // add test triggers
+    /*
+    //this.query("DELETE FROM alarm_triggers;);
+    this.query(
+      "INSERT INTO alarm_triggers(measurement_name, operator, value) VALUES ('TEST_random_float', 'gt', 75)"
+    );
+    this.query(
+      "INSERT INTO alarm_triggers(measurement_name, operator, value) VALUES ('TEST_random_float', 'lt', 25)"
+    );
+    */
     console.log("sqlite3 - init");
   }
 
@@ -60,6 +75,26 @@ class SQLite {
       ts,
       JSON.stringify(dataObj.values),
     ]);
+  }
+
+  // save alarm events
+  async saveAlarm(message) {
+    await this.query("INSERT INTO alarms(ts, message) VALUES (?,?)", [
+      moment().valueOf(),
+      message,
+    ]);
+  }
+
+  // get alarm events
+  async getAlarms() {
+    const results = await this.query("SELECT * from alarms");
+    return results;
+  }
+
+  // get alarm triggers
+  async getAlarmTriggers() {
+    const results = await this.query("SELECT * from alarm_triggers");
+    return results;
   }
 
   // get measurements
