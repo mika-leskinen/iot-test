@@ -12,9 +12,10 @@ import moment from "moment";
 import { Button, Col, Dropdown, Form, Row } from "react-bootstrap";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
+import { json2csv } from "json-2-csv";
 
 const fetchUrl = (import.meta.env.VITE_API_BASE_URL || "") + "/api/timeseries";
-const defaultAgg = "hourly";
+const defaultAgg = "";
 
 // TODO
 const DataChart = () => {
@@ -45,6 +46,31 @@ const DataChart = () => {
         );
         setLoading(false);
       });
+  };
+
+  // csv download
+  // see https://dev.to/graciesharma/implementing-csv-data-export-in-react-without-external-libraries-3030
+  const getCsv = () => {
+    const csv = json2csv(
+      data
+        .map((d) => {
+          return {
+            ts: d.ts,
+            [selectedField]: d.values[selectedField] || null,
+          };
+        })
+        .filter((o) => o[selectedField] != null)
+    );
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = moment().format("YYYYMMDDHHmmss") + "-iot-data-export.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // get data for current day by default
@@ -191,6 +217,9 @@ const DataChart = () => {
                 ></Tooltip>
               </LineChart>
             </ResponsiveContainer>
+            <Button className="mt-2" onClick={getCsv}>
+              Download CSV
+            </Button>
           </div>
         </div>
       )}

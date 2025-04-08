@@ -8,7 +8,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <Navbar collapseOnSelect expand="lg" className="w-100 p-0 m-0 pb-5">
+    <Navbar collapseOnSelect expand="lg" className="w-100 p-0 m-0 pb-4">
       <Navbar.Collapse id="responsive-navbar-nav">
         <Container className="justify-content-center">
           <Row>
