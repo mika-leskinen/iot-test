@@ -8,6 +8,12 @@ const { aggregateHourly } = require("../util");
 class HttpApi {
   constructor(options = { port: 9999, datastores: null }) {
     this.app = express();
+
+    this.port = options.port;
+    this.datastores = options.datastores;
+    this.authToken = options.authToken;
+    this.basicAuth = options.basicAuth;
+
     this.app.use(express.json());
 
     // TODO: cors
@@ -17,9 +23,10 @@ class HttpApi {
       })
     );
 
-    this.port = options.port;
-    this.datastores = options.datastores;
-    this.authToken = options.authToken;
+    // add basic auth middleware to "/api" endpoint
+    if (this.basicAuth != null) {
+      this.app.use("/api*", this.basicAuth);
+    }
 
     if (!(this.datastores?.length > 0) || !(this.authToken?.length > 0)) {
       console.error("http api - constructor err");

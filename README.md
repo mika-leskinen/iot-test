@@ -212,10 +212,10 @@ Current state:
 
 ### Grade 4
 
-- ❌ API features
+- ✅ API features
   - ✅ Cloud service has an API for fetching measurement data
   - ✅ API provides aggregated data (hourly average) for a selected measurement
-  - ❌ API has an authentication/authorization mechanism in place
+  - ✅ API has an authentication/authorization mechanism in place
 
 ### Grade 5
 

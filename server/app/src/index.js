@@ -29,10 +29,22 @@ const HttpApi = require("./httpApi");
 // supersecret auth token to block unauthorized devices
 const authToken = process.env.DEVICE_AUTH_TOKEN;
 
+// basic auth
+const auth = require("express-basic-auth");
+
 new HttpApi({
   port: process.env.HTTP_PORT || 9999,
   datastores,
   authToken,
+  // disable basic auth in development
+  basicAuth:
+    process.env.NODE_ENV === "development"
+      ? null
+      : auth({
+          users: { [process.env.BASIC_AUTH_USER]: process.env.BASIC_AUTH_PASS },
+          unauthorizedResponse: "401 Unauthorized",
+          challenge: true,
+        }),
 });
 
 // mqtt

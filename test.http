@@ -1,5 +1,6 @@
 ### 200
 GET http://localhost:9999/api/timeseries
+Authorization: Basic base64(USER:PASS)
 
 ### 200
 GET http://localhost:9999/api/timeseries?startTs=2025-04-01 03:55:00&endTs=2025-04-01 14:56:00
